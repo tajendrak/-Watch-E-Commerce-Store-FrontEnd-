@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .cart-total-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    .currency-select-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .currency-select {
+      padding: 5px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+  <h2 class="mb-4">Your Cart</h2>
+  <table class="table table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="cart-items">
+      <!-- Items will be inserted here -->
+    </tbody>
+  </table>
+
+  <div class="cart-total-section">
+    <div class="currency-select-section">
+      <strong>Show price in:</strong>
+      <select id="cartCurrency" class="currency-select">
+        <option value="USD">USD</option>
+        <option value="MYR">MYR</option>
+        <option value="EUR">EUR</option>
+        <option value="GBP">GBP</option>
+      </select>
+    </div>
+    <div>
+      <h4>Total: <span id="cart-total">0</span> <span id="currency-label">USD</span></h4>
+    </div>
+  </div>
+
+  <div class="text-end mt-4">
+    <a href="product.html" class="btn btn-secondary me-2">Continue Shopping</a>
+    <a href="checkout.html" class="btn btn-success">Proceed to Checkout</a>
+  </div>
+</div>
+
+<script>
+let cartFx = { USD: 1 };
+
+async function loadCartRates() {
+  try {
+    const res = await fetch("https://api.frankfurter.app/latest?from=USD");
+    const data = await res.json();
+    cartFx = { USD: 1, ...data.rates };
+  } catch (e) {
+    console.warn("FX fetch failed, defaulting to USD only");
+  }
+}
+
+function getSelectedRate() {
+  const cur = document.getElementById("cartCurrency").value;
+  return cartFx[cur] || 1;
+}
+
+function loadCart() {
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  let cartItemsContainer = document.getElementById('cart-items');
+  let total = 0;
+  const rate = getSelectedRate();
+  const currency = document.getElementById("cartCurrency").value;
+
+  cartItemsContainer.innerHTML = '';
+
+  cart.forEach((item, index) => {
+    let subtotal = item.price * item.quantity;
+    total += subtotal;
+    cartItemsContainer.innerHTML += `
+      <tr>
+        <td>${item.name}</td>
+        <td class="price" data-usd="${item.price}">${(item.price * rate).toFixed(2)} ${currency}</td>
+        <td>
+          <input type="number" value="${item.quantity}" min="1" class="form-control w-50"
+            onchange="updateQuantity(${index}, this.value)">
+        </td>
+        <td class="subtotal" data-usd="${subtotal}">${(subtotal * rate).toFixed(2)} ${currency}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="removeItem(${index})">Remove</button></td>
+      </tr>
+    `;
+  });
+
+  document.getElementById('cart-total').textContent = (total * rate).toFixed(2);
+  document.getElementById('currency-label').textContent = currency;
+  const totalUsd = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  localStorage.setItem("selectedCurrency", currency);
+  localStorage.setItem("cartConvertedTotal", (totalUsd * rate).toFixed(2));
+  localStorage.setItem("cartTotalUSD", totalUsd.toFixed(2));
+}
+
+function updateQuantity(index, newQty) {
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  cart[index].quantity = parseInt(newQty);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  loadCart();
+}
+
+function removeItem(index) {
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  cart.splice(index, 1);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  loadCart();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadCartRates();
+  loadCart();
+  const sel = document.getElementById("cartCurrency");
+  if (sel) sel.addEventListener("change", () => {
+    loadCart(); 
+  });
+});
+</script>
+</body>
+</html>

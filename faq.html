@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Watch Store - FAQ </title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <a href="product.html">Products</a> |
+  <a href="contact.html">Contact</a> |
+  <a href="faq.html" aria-current="page">FAQ</a>
+</nav>
+
+<header>
+  <h1>Frequently Asked Questions</h1>
+  <p>Quick answers to common questions.</p>
+</header>
+
+<main>
+  <section>
+    <label for="faqSearch">Search FAQs</label><br>
+    <input id="faqSearch" type="search" placeholder="e.g. shipping, warranty, returns"/>
+    <div id="tip" role="status" aria-live="polite"></div>
+  </section>
+
+  <section>
+    <h2>Help Topics</h2>
+    <div id="faqContainer"></div>
+  </section>
+</main>
+
+<footer>
+  <p>© <span id="year"></span> Watch Store. All rights reserved.</p>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const HELP_KEY = "faqHelpfulVotes";
+  const LAST_VIEWED_KEY = "faqLastViewed";
+
+  const faqs = [
+    {
+      q: "What is your shipping time within Malaysia?",
+      a: "Standard shipping takes 3–5 business days. Express options are available at checkout.",
+      tags: ["shipping","delivery","malaysia"]
+    },
+    {
+      q: "Do the watches have an international warranty?",
+      a: "Yes. Most watches include a 1–2 year international warranty depending on the model.",
+      tags: ["warranty","support"]
+    },
+    {
+      q: "Can I return or exchange a watch?",
+      a: "Items can be returned within 14 days in original condition and packaging. Exchanges are subject to stock availability.",
+      tags: ["returns","exchange","policy"]
+    },
+    {
+      q: "Are your products authentic?",
+      a: "Absolutely. All products are sourced from authorized distributors and include proof of authenticity.",
+      tags: ["authenticity","original"]
+    },
+    {
+      q: "Which payment methods do you accept?",
+      a: "We accept major credit/debit cards, FPX online banking, and e-wallets supported at checkout.",
+      tags: ["payment","methods","banking"]
+    }
+  ];
+
+  const container = document.getElementById('faqContainer');
+
+  function renderFAQs(list) {
+    container.innerHTML = "";
+    list.forEach((item, idx) => {
+      const helpful = getHelpfulCount(item.q);
+
+      const details = document.createElement('details');
+      const summary = document.createElement('summary');
+      summary.textContent = item.q;
+
+      const body = document.createElement('div');
+      const p = document.createElement('p');
+      p.textContent = item.a;
+
+      const helpfulWrap = document.createElement('div');
+      const helpfulBtn = document.createElement('button');
+      helpfulBtn.textContent = "Helpful";
+      helpfulBtn.setAttribute('data-action', 'helpful');
+      helpfulBtn.setAttribute('data-q', encodeURIComponent(item.q));
+
+      const notHelpfulBtn = document.createElement('button');
+      notHelpfulBtn.textContent = "Not Helpful";
+      notHelpfulBtn.setAttribute('data-action', 'nothelpful');
+      notHelpfulBtn.setAttribute('data-q', encodeURIComponent(item.q));
+
+      const countSpan = document.createElement('span');
+      countSpan.textContent = " Helpful votes: " + helpful;
+      countSpan.setAttribute('data-helpcount', encodeURIComponent(item.q));
+
+      const tags = document.createElement('div');
+      tags.textContent = "Tags: " + item.tags.join(", ");
+
+      helpfulWrap.appendChild(helpfulBtn);
+      helpfulWrap.appendChild(notHelpfulBtn);
+      helpfulWrap.appendChild(countSpan);
+
+      body.appendChild(p);
+      body.appendChild(helpfulWrap);
+      body.appendChild(tags);
+
+      details.appendChild(summary);
+      details.appendChild(body);
+      container.appendChild(details);
+    });
+  }
+  renderFAQs(faqs);
+
+  function getHelpfulCount(q) {
+    const store = JSON.parse(localStorage.getItem(HELP_KEY) || "{}");
+    return store[q] || 0;
+  }
+
+  function setHelpfulCount(q, val) {
+    const store = JSON.parse(localStorage.getItem(HELP_KEY) || "{}");
+    store[q] = val;
+    localStorage.setItem(HELP_KEY, JSON.stringify(store));
+  }
+
+  function updateHelpCountUI(q) {
+    const el = document.querySelector('[data-helpcount="' + encodeURIComponent(q) + '"]');
+    if (el) el.textContent = " Helpful votes: " + getHelpfulCount(q);
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const action = btn.getAttribute('data-action');
+    const key = decodeURIComponent(btn.getAttribute('data-q'));
+    const count = getHelpfulCount(key);
+
+    if (action === 'helpful') {
+      setHelpfulCount(key, count + 1);
+    } else if (action === 'nothelpful') {
+      // Optional: track separately or use for improvements
+    }
+    updateHelpCountUI(key);
+    localStorage.setItem(LAST_VIEWED_KEY, key);
+  });
+
+  const tips = [
+    "Tip: Use the search box to quickly find answers.",
+    "Tip: Check your warranty card inside the box.",
+    "Tip: Express shipping may be available at checkout."
+  ];
+  const tip = document.getElementById('tip');
+  let i = 0;
+  setInterval(() => {
+    tip.textContent = tips[i % tips.length];
+    i++;
+  }, 4000);
+  tip.textContent = tips[0];
+
+  // Search filter
+  const search = document.getElementById('faqSearch');
+  search.addEventListener('input', () => {
+    const term = search.value.toLowerCase().trim();
+    const filtered = faqs.filter(f =>
+      f.q.toLowerCase().includes(term) ||
+      f.a.toLowerCase().includes(term) ||
+      f.tags.some(t => t.toLowerCase().includes(term))
+    );
+    renderFAQs(filtered);
+  });
+</script>
+<script src="api_social.js"></script>
+
+</body>
+</html>

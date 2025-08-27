@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Casio G-SHOCK G-STEEL 700",
+    "price": 120,
+    "image": "Images/casio1.webp"
+  },
+  {
+    "id": 2,
+    "name": "OMEGA Seamaster Diver 300M",
+    "price": 750,
+    "image": "Images/Omega.webp"
+  },
+  {
+    "id": 3,
+    "name": "Rolex Cosmograph Daytona",
+    "price": 999,
+    "image": "Images/Rolex.webp"
+  },
+  {
+    "id": 4,
+    "name": "Richard Mille RM 35-02 Carbon TPT",
+    "price": 1999,
+    "image": "Images/Richard.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Sanda 6198 Sports Luxury",
+    "price": 119.99,
+    "image": "Images/sport.avif"
+  },
+  {
+    "id": 6,
+    "name": "Rolex Daytona Rainbow",
+    "price": 1199.99,
+    "image": "Images/Rolex1.webp"
+  },
+  {
+    "id": 7,
+    "name": "Fossil",
+    "price": 799.99,
+    "image": "Images/Fossil.webp"
+  },
+  {
+    "id": 8,
+    "name": "Giga Blue Planet",
+    "price": 599.99,
+    "image": "Images/Giga.webp"
+  }
+]

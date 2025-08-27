@@ -1,0 +1,58 @@
+{
+  "1": {
+    "name": "Casio G-SHOCK G-STEEL 700",
+    "price": 120,
+    "image": "Images/casio1.webp",
+    "description": "A tough and stylish G-SHOCK.",
+    "specs": [ "Stainless Steel Bezel", "Shock Resistant", "200m Water Resistant", "LED Light" ]
+  },
+  "2": {
+    "name": "OMEGA Seamaster Diver 300M",
+    "price": 750,
+    "image": "Images/Omega.webp",
+    "description": "Luxury diving watch.",
+    "specs": [ "300m Water Resistance", "Ceramic Bezel", "Swiss Automatic Movement", "Helium Escape Valve" ]
+  },
+  "3": {
+    "name": "Rolex Cosmograph Daytona",
+    "price": 999,
+    "image": "Images/Rolex.webp",
+    "description": "Iconic chronograph watch.",
+    "specs": [ "Oystersteel Case", "Chronograph Function", "100m Water Resistant", "Calibre 4130 Movement" ]
+  },
+  "4": {
+    "name": "Richard Mille RM 35-02 Carbon TPT",
+    "price": 1999,
+    "image": "Images/Richard.jpg",
+    "description": "Ultra-light luxury sports watch.",
+    "specs": [ "Carbon TPT Case", "Skeleton Dial", "Automatic Movement", "50m Water Resistant" ]
+  },
+  "5": {
+    "name": "Sanda 6198 Sports Luxury",
+    "price": 119.99,
+    "image": "Images/sport.avif",
+    "description": "Affordable sports luxury watch.",
+    "specs": [ "Sports Luxury Design", "Water Resistant", "Quartz Movement", "Stainless Steel Strap" ]
+  },
+  "6": {
+    "name": "Rolex Daytona Rainbow",
+    "price": 1199.99,
+    "image": "Images/Rolex1.webp",
+    "description": "Exclusive Rolex Daytona.",
+    "specs": [ "Rainbow Sapphire Bezel", "Oyster Case", "Chronograph Function", "100m Water Resistant" ]
+  },
+  "7": {
+    "name": "Fossil",
+    "price": 799.99,
+    "image": "Images/Fossil.webp",
+    "description": "Classic Fossil watch with timeless design.",
+    "specs": [ "Stainless Steel Case", "Chronograph Display", "Leather Strap", "50m Water Resistant" ]
+  },
+  "8": {
+    "name": "Giga Blue Planet",
+    "price": 599.99,
+    "image": "Images/Giga.webp",
+    "description": "Innovative Giga Blue Planet watch with unique style.",
+    "specs": [ "Sapphire Crystal Dome", "Automatic Movement", "Limited Edition", "Water Resistant" ]
+  }
+}

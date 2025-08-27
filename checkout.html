@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+  <h2 class="mb-4">Checkout</h2>
+  <div class="row">
+    <div class="col-md-6">
+      <h4>Customer Details</h4>
+      <form id="checkout-form">
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="fullname" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" id="email" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Address</label>
+          <textarea id="address" class="form-control" required></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Payment Method</label>
+          <select id="payment" class="form-select" required>
+            <option value="">Select</option>
+            <option value="cod">Cash on Delivery</option>
+            <option value="card">Credit/Debit Card</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Place Order</button>
+      </form>
+    </div>
+
+    <div class="col-md-6">
+      <h4>Order Summary</h4>
+      <ul class="list-group mb-3" id="order-summary"></ul>
+      <h5>Total: <span id="checkout-total">0</span></h5>
+      <h4>Estimated Delivery Date:</h4>
+      <p id="estimated-delivery">Loading...</p>
+    </div>
+  </div>
+</div>
+
+<script>
+
+function setCookie(name, value, days) {
+  const d = new Date();
+  d.setTime(d.getTime() + (days*24*60*60*1000));
+  let expires = "expires=" + d.toUTCString();
+  document.cookie = name + "=" + encodeURIComponent(value) + ";" + expires + ";path=/";
+}
+
+function getCookie(name) {
+  let cname = name + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i].trim();
+    if (c.indexOf(cname) === 0) {
+      return c.substring(cname.length, c.length);
+    }
+  }
+  return "";
+}
+
+
+function loadOrderSummary() {
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  let summaryContainer = document.getElementById('order-summary');
+  summaryContainer.innerHTML = '';
+
+  const currency = localStorage.getItem("selectedCurrency") || "USD";
+  const totalConverted = parseFloat(localStorage.getItem("cartConvertedTotal")) || 0;
+  const totalUSD = parseFloat(localStorage.getItem("cartTotalUSD")) || 0;
+
+  cart.forEach(item => {
+    let subtotal = item.price * item.quantity;
+    let rate = totalConverted / totalUSD || 1; 
+    let convertedSubtotal = subtotal * rate;
+
+    summaryContainer.innerHTML += `
+      <li class="list-group-item d-flex justify-content-between">
+        ${item.name} (x${item.quantity})
+        <span>${convertedSubtotal.toFixed(2)} ${currency}</span>
+      </li>
+    `;
+  });
+
+  document.getElementById('checkout-total').textContent = totalConverted.toFixed(2);
+  document.getElementById('checkout-total').textContent = `${totalConverted.toFixed(2)} ${currency}`;
+
+}
+
+async function loadEstimatedDelivery() {
+  const deliveryContainer = document.getElementById('estimated-delivery');
+
+  try {
+    const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const data = await res.json(); // data is an array of posts
+
+    const randomIndex = Math.floor(Math.random() * data.length);
+    const post = data[randomIndex];
+
+    const deliveryDays = (post.id % 5) + 3;
+
+    const today = new Date();
+    const deliveryDate = new Date(today);
+    deliveryDate.setDate(today.getDate() + deliveryDays);
+
+    const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+    deliveryContainer.textContent = deliveryDate.toLocaleDateString(undefined, options);
+
+
+  } catch (error) {
+    console.error("Error fetching delivery estimate:", error);
+    deliveryContainer.textContent = "Unable to fetch delivery date.";
+  }
+}
+	
+
+
+document.getElementById('checkout-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  
+  const fullName = document.getElementById("fullname").value;
+  const email = document.getElementById("email").value;
+  const address = document.getElementById("address").value;
+  const payment = document.getElementById("payment").value;
+
+  
+  setCookie("checkoutName", fullName, 7);
+  setCookie("checkoutEmail", email, 7);
+  setCookie("checkoutAddress", address, 7);
+  setCookie("checkoutPayment", payment, 7);
+
+  alert('Order placed successfully!');
+  localStorage.removeItem('cart');
+  window.location.href = 'index.html';
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById("fullname").value = getCookie("checkoutName") || "";
+  document.getElementById("email").value = getCookie("checkoutEmail") || "";
+  document.getElementById("address").value = getCookie("checkoutAddress") || "";
+  document.getElementById("payment").value = getCookie("checkoutPayment") || "";
+
+  loadOrderSummary(); 
+  loadEstimatedDelivery();
+});
+</script>
+<script src="api_social.js"></script>
+
+</body>
+</html>
+
